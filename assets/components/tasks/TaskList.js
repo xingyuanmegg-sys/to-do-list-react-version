@@ -48,6 +48,9 @@ export default function TaskList(props) {
     setUpdateModalVisible(true);
     setTaskToEdit(tasksList.find((task) => task.id == id));
   };
+  const setUpdateModalInvisible = () => {
+    setUpdateModalVisible(false);
+  };
   const updateTask = (info) => {
     setTasksList(
       tasksList.map((task) =>
@@ -88,6 +91,7 @@ export default function TaskList(props) {
       ></AddTaskModal>
       <UpdateTaskModal
         isVisible={updateModalVisible}
+        setUpdateModalInvisible={setUpdateModalInvisible}
         task={taskToEdit}
         onUpdateTask={(info) => {
           updateTask(info);

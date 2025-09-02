@@ -20,7 +20,7 @@ const UpdateTaskModal = (props) => {
 
   useEffect(() => {
     setModalVisible(props.isVisible);
-    // 当模态框可见时，用现有任务数据填充表单
+
     if (props.isVisible && props.task) {
       setTaskName(props.task.todo || "");
       if (props.task.dueDate) {
@@ -86,7 +86,7 @@ const UpdateTaskModal = (props) => {
     setTaskName("");
     setSelectedDate(null);
     setHasDate(false);
-    setModalVisible(false);
+    props.setUpdateModalInvisible();
   };
 
   const handleCancel = () => {
@@ -113,7 +113,7 @@ const UpdateTaskModal = (props) => {
               setTaskName("");
               setSelectedDate(null);
               setHasDate(false);
-              setModalVisible(false);
+              props.setUpdateModalInvisible();
               if (props.onCancel) {
                 props.onCancel();
               }
@@ -122,7 +122,7 @@ const UpdateTaskModal = (props) => {
         ]
       );
     } else {
-      setModalVisible(false);
+      props.setUpdateModalInvisible();
       if (props.onCancel) {
         props.onCancel();
       }
