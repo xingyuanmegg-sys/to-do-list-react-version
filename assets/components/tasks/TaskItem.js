@@ -16,6 +16,10 @@ const TaskItem = (props) => {
       },
     ]);
   };
+  const handlePress = () => {
+    props.handlePress(props.id);
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -23,6 +27,7 @@ const TaskItem = (props) => {
         props.completed && styles.completedTask,
       ]}
       onLongPress={handleLongPress}
+      onPress={handlePress}
     >
       <View style={styles.taskItemInfo}>
         <Text

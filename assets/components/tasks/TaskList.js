@@ -4,6 +4,9 @@ import TaskItem from "./TaskItem";
 import TasksStats from "./TasksStats";
 import AddTaskButton from "../buttons/AddTaskButton";
 import AddTaskModal from "../AddTaskModal";
+import UpdateTaskModal from "../UpdateTaskModal";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
+
 export default function TaskList(props) {
   //mark/unmark to dos
   const [tasksList, setTasksList] = useState(props.tasks);
@@ -38,6 +41,22 @@ export default function TaskList(props) {
   const deleteTask = (id) => {
     setTasksList((tasksList) => tasksList.filter((item) => item.id !== id));
   };
+  //update task
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
+  const getUpdateTaskModal = (id) => {
+    setUpdateModalVisible(true);
+    setTaskToEdit(tasksList.find((task) => task.id == id));
+  };
+  const updateTask = (info) => {
+    setTasksList(
+      tasksList.map((task) =>
+        task.id == info.id
+          ? { ...task, todo: info.name, dueDate: info.dueDate }
+          : task
+      )
+    );
+  };
 
   return (
     <View style={styles.listContainer}>
@@ -48,8 +67,10 @@ export default function TaskList(props) {
             todo={item.todo}
             completed={item.completed}
             dueDate={formatDate(item.dueDate)}
+            id={item.id}
             toggleChecked={() => toggleChecked(item.id)}
             deleteTask={() => deleteTask(item.id)}
+            handlePress={(id) => getUpdateTaskModal(id)}
           ></TaskItem>
         )}
         keyExtractor={(item) => item.id}
@@ -65,6 +86,13 @@ export default function TaskList(props) {
       <AddTaskModal
         onAddTask={(name, dueDate) => addNewTask(name, dueDate)}
       ></AddTaskModal>
+      <UpdateTaskModal
+        isVisible={updateModalVisible}
+        task={taskToEdit}
+        onUpdateTask={(info) => {
+          updateTask(info);
+        }}
+      ></UpdateTaskModal>
     </View>
   );
 }
