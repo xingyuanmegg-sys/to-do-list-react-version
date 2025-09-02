@@ -3,10 +3,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import MainBoard from "./assets/components/MainBoard";
-import Header from "./assets/components/Header";
-import AddTaskButton from "./assets/components/buttons/AddTaskButton";
-import AddTaskModal from "./assets/components/AddTaskModal";
+
+import Header from "./components/Header";
+import MainBoard from "./components/MainBoard";
+import * as Notifications from "expo-notifications";
+
 const queryClient = new QueryClient();
 export default function App() {
   return (

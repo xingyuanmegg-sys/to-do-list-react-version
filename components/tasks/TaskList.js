@@ -1,15 +1,66 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View, Alert } from "react-native";
 import TaskItem from "./TaskItem";
 import TasksStats from "./TasksStats";
 import AddTaskButton from "../buttons/AddTaskButton";
 import AddTaskModal from "../AddTaskModal";
 import UpdateTaskModal from "../UpdateTaskModal";
 import { setStatusBarBackgroundColor } from "expo-status-bar";
+import * as Notifications from "expo-notifications";
+import { isAfter, isBefore } from "date-fns";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function TaskList(props) {
-  //mark/unmark to dos
   const [tasksList, setTasksList] = useState(props.tasks);
+  //notification permission
+
+  useEffect(() => {
+    // 监听收到的通知
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        // 当收到通知时显示弹窗
+        Alert.alert(
+          notification.request.content.title,
+          notification.request.content.body,
+          [{ text: "OK" }]
+        );
+      }
+    );
+
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    const tasksNotDone = tasksList.filter(
+      (task) =>
+        !task.completed && (!task.dueDate || isBefore(task.dueDate, new Date()))
+    );
+
+    if (tasksNotDone.length > 0) {
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Upcoming Tasks 🗓️ ~",
+          body: `You still have ${tasksNotDone.length} ${
+            tasksNotDone.length > 1 ? "tasks" : "task"
+          } not finished yet. Please remember to check~`,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: 5,
+        },
+      });
+    }
+  }, []);
+
+  //mark/unmark to dos
   const toggleChecked = (id) => {
     setTasksList((tasksList) =>
       tasksList.map((task) =>
