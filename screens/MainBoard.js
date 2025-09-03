@@ -1,9 +1,9 @@
 import getTodos from "../utils/my-api";
 import { useQuery } from "@tanstack/react-query";
-import Loading from "./common/Loading";
-import ErrorMessage from "./common/ErrorMessage";
+import Loading from "../components/common/loaders/Loading";
+import ErrorMessage from "../components/common/errors/ErrorMessage";
 import { View, StyleSheet } from "react-native";
-import TaskList from "./tasks/TaskList";
+import TaskList from "../components/tasks/TaskList";
 
 export default function MainBoard() {
   const {

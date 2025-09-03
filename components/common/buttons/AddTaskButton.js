@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   button: {
     position: "absolute",
     right: 20,
-    bottom: 80, // 在Footer上方
+    bottom: 80,
     width: 60,
     height: 60,
     borderRadius: 30,

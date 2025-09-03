@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import TaskItem from "./TaskItem";
-import AddTaskButton from "../buttons/AddTaskButton";
-import AddTaskModal from "../AddTaskModal";
-import UpdateTaskModal from "../UpdateTaskModal";
+import AddTaskButton from "../common/buttons/AddTaskButton";
+import AddTaskModal from "../common/modals/AddTaskModal";
+import UpdateTaskModal from "../common/modals/UpdateTaskModal";
 import * as Notifications from "expo-notifications";
 import { isBefore } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
@@ -162,7 +162,7 @@ export default function TaskList(props) {
     (id) => {
       setTaskToEdit(tasksList.find((task) => task.id == id));
       setUpdateModalVisible(true);
-      console.log(taskToEdit);
+      //console.log(taskToEdit);
     },
     [tasksList]
   );
@@ -172,23 +172,18 @@ export default function TaskList(props) {
   const sortedTasks = useCallback(() => {
     if (!sortByDate) return tasksList;
 
-    // 分离有日期和没有日期的任务
     const tasksWithDate = tasksList.filter((task) => task.dueDate);
     const tasksWithoutDate = tasksList.filter((task) => !task.dueDate);
 
-    // 对有日期的任务进行排序：先按日期，然后按完成状态
     const sortedWithDate = tasksWithDate.sort((a, b) => {
-      // 先按日期排序（升序：早的在前）
       const dateCompare = new Date(a.dueDate) - new Date(b.dueDate);
       if (dateCompare !== 0) return dateCompare;
 
-      // 日期相同，按完成状态排序：未完成的在前
       if (!a.completed && b.completed) return -1;
       if (a.completed && !b.completed) return 1;
       return 0;
     });
 
-    // 保持没有日期的任务的相对顺序
     return [...sortedWithDate, ...tasksWithoutDate];
   }, [tasksList, sortByDate]);
 

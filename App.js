@@ -4,8 +4,8 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Header from "./components/Header";
-import MainBoard from "./components/MainBoard";
+import Header from "./screens/Header";
+import MainBoard from "./screens/MainBoard";
 
 const queryClient = new QueryClient();
 export default function App() {
