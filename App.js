@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Header from "./components/Header";
 import MainBoard from "./components/MainBoard";
-import * as Notifications from "expo-notifications";
 
 const queryClient = new QueryClient();
 export default function App() {

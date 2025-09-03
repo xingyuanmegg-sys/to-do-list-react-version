@@ -4,24 +4,18 @@ import {
   Modal,
   StyleSheet,
   Text,
-  Pressable,
   View,
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import AddTaskButton from "./buttons/AddTaskButton";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AddTaskModal = (props) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [taskName, setTaskName] = useState("");
   const [show, setShow] = useState(false);
   const [hasDate, setHasDate] = useState(false);
-
-  const onPress = () => {
-    setModalVisible(true);
-  };
 
   const onChange = (event, selectedDate) => {
     setShow(false);
@@ -72,7 +66,7 @@ const AddTaskModal = (props) => {
     setTaskName("");
     setSelectedDate(null);
     setHasDate(false);
-    setModalVisible(false);
+    props.setAddTaskModalInvisible();
   };
 
   const handleCancel = () => {
@@ -92,13 +86,13 @@ const AddTaskModal = (props) => {
               setTaskName("");
               setSelectedDate(null);
               setHasDate(false);
-              setModalVisible(false);
+              props.setAddTaskModalInvisible();
             },
           },
         ]
       );
     } else {
-      setModalVisible(false);
+      props.setAddTaskModalInvisible();
     }
   };
 
@@ -107,7 +101,7 @@ const AddTaskModal = (props) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={props.isVisible}
         onRequestClose={handleCancel}
       >
         <View style={styles.centeredView}>
@@ -222,7 +216,6 @@ const AddTaskModal = (props) => {
           </View>
         </View>
       </Modal>
-      <AddTaskButton onPress={onPress} />
     </View>
   );
 };

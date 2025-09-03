@@ -4,7 +4,6 @@ import {
   Modal,
   StyleSheet,
   Text,
-  Pressable,
   View,
   TextInput,
   TouchableOpacity,
@@ -12,15 +11,14 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const UpdateTaskModal = (props) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  //const [modalVisible, setModalVisible] = useState(false);
+  //only for the display of the data
   const [selectedDate, setSelectedDate] = useState(null);
   const [taskName, setTaskName] = useState("");
   const [show, setShow] = useState(false);
   const [hasDate, setHasDate] = useState(false);
 
   useEffect(() => {
-    setModalVisible(props.isVisible);
-
     if (props.isVisible && props.task) {
       setTaskName(props.task.todo || "");
       if (props.task.dueDate) {
@@ -114,18 +112,12 @@ const UpdateTaskModal = (props) => {
               setSelectedDate(null);
               setHasDate(false);
               props.setUpdateModalInvisible();
-              if (props.onCancel) {
-                props.onCancel();
-              }
             },
           },
         ]
       );
     } else {
       props.setUpdateModalInvisible();
-      if (props.onCancel) {
-        props.onCancel();
-      }
     }
   };
 
@@ -134,7 +126,7 @@ const UpdateTaskModal = (props) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={props.isVisible}
         onRequestClose={handleCancel}
       >
         <View style={styles.centeredView}>
@@ -146,7 +138,7 @@ const UpdateTaskModal = (props) => {
               <Text style={styles.label}>Task Name: </Text>
               <TextInput
                 style={styles.textInput}
-                placeholder="Enter task name"
+                placeholder={"Enter new task name"}
                 placeholderTextColor="#999"
                 value={taskName}
                 onChangeText={setTaskName}

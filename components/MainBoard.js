@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
 import getTodos from "../utils/my-api";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "./common/Loading";
 import ErrorMessage from "./common/ErrorMessage";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import TaskList from "./tasks/TaskList";
-import AddTaskButton from "./buttons/AddTaskButton";
-import AddTaskModal from "./AddTaskModal";
 
 export default function MainBoard() {
   const {

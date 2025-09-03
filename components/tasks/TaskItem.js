@@ -11,7 +11,7 @@ const TaskItem = (props) => {
         text: "Delete",
         style: "destructive",
         onPress: () => {
-          props.deleteTask();
+          props.deleteTask(props.id);
         },
       },
     ]);
@@ -43,7 +43,7 @@ const TaskItem = (props) => {
         <Checkbox
           style={styles.checkbox}
           value={props.completed}
-          onValueChange={props.toggleChecked}
+          onValueChange={() => props.toggleChecked(props.id)}
           color={props.completed ? "#2E7D32" : "#1976D2"}
         />
       </View>
