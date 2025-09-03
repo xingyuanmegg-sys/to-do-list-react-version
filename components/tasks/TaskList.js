@@ -1,11 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View, Alert } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import TaskItem from "./TaskItem";
 import AddTaskButton from "../buttons/AddTaskButton";
 import AddTaskModal from "../AddTaskModal";
 import UpdateTaskModal from "../UpdateTaskModal";
 import * as Notifications from "expo-notifications";
 import { isBefore } from "date-fns";
+import { Ionicons } from "@expo/vector-icons";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -21,10 +29,8 @@ export default function TaskList(props) {
 
   //notification handler
   useEffect(() => {
-    // 监听收到的通知
     const subscription = Notifications.addNotificationReceivedListener(
       (notification) => {
-        // 当收到通知时显示弹窗
         Alert.alert(
           notification.request.content.title,
           notification.request.content.body,
@@ -105,6 +111,27 @@ export default function TaskList(props) {
     },
     [tasksList]
   );
+  const deleteAllCompleteTasks = useCallback(() => {
+    Alert.alert(
+      "Delete All Completed Tasks",
+      "Are you sure you want to delete all completed tasks? This action cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setTasksList((prevTasks) =>
+              prevTasks.filter((task) => !task.completed)
+            );
+          },
+        },
+      ]
+    );
+  }, [tasksList]);
 
   //update task
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
@@ -140,6 +167,31 @@ export default function TaskList(props) {
     [tasksList]
   );
 
+  //sort
+  const [sortByDate, setSortByDate] = useState(false);
+  const sortedTasks = useCallback(() => {
+    if (!sortByDate) return tasksList;
+
+    // 分离有日期和没有日期的任务
+    const tasksWithDate = tasksList.filter((task) => task.dueDate);
+    const tasksWithoutDate = tasksList.filter((task) => !task.dueDate);
+
+    // 对有日期的任务进行排序：先按日期，然后按完成状态
+    const sortedWithDate = tasksWithDate.sort((a, b) => {
+      // 先按日期排序（升序：早的在前）
+      const dateCompare = new Date(a.dueDate) - new Date(b.dueDate);
+      if (dateCompare !== 0) return dateCompare;
+
+      // 日期相同，按完成状态排序：未完成的在前
+      if (!a.completed && b.completed) return -1;
+      if (a.completed && !b.completed) return 1;
+      return 0;
+    });
+
+    // 保持没有日期的任务的相对顺序
+    return [...sortedWithDate, ...tasksWithoutDate];
+  }, [tasksList, sortByDate]);
+
   const renderTaskItem = useCallback(
     ({ item }) => {
       return (
@@ -154,13 +206,43 @@ export default function TaskList(props) {
         ></TaskItem>
       );
     },
-    [toggleChecked, deleteTask, setUpdateTaskModal]
+    [
+      toggleChecked,
+      deleteTask,
+      setUpdateTaskModal,
+      deleteAllCompleteTasks,
+      sortedTasks,
+    ]
   );
 
   return (
     <View style={styles.listContainer}>
+      <View style={styles.actionButtonsContainer}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={deleteAllCompleteTasks}
+        >
+          <Ionicons name="trash-outline" size={20} color="#fff" />
+          <Text style={styles.actionButtonText}>Delete Completed</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionButton, sortByDate && styles.activeButton]}
+          onPress={() => setSortByDate((prev) => !prev)}
+        >
+          <Ionicons
+            name={sortByDate ? "calendar" : "calendar-outline"}
+            size={20}
+            color="#fff"
+          />
+          <Text style={styles.actionButtonText}>
+            {sortByDate ? "Sorted" : "Sort by Date"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
-        data={tasksList}
+        data={sortedTasks()}
         renderItem={renderTaskItem}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -200,6 +282,40 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F7FA",
     paddingVertical: 8,
     borderRadius: 10,
+  },
+  actionButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#3498db",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 6,
+  },
+  activeButton: {
+    backgroundColor: "#2c3e50",
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 12,
   },
   separator: {
     height: 1,
