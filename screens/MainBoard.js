@@ -2,7 +2,7 @@ import getTodos from "../utils/my-api";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../components/common/loaders/Loading";
 import ErrorMessage from "../components/common/errors/ErrorMessage";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import TaskList from "../components/tasks/TaskList";
 
 export default function MainBoard() {
@@ -10,6 +10,8 @@ export default function MainBoard() {
     isLoading,
     error,
     data: tasklist,
+    refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ["todolistData"],
     queryFn: async () => {
@@ -17,14 +19,24 @@ export default function MainBoard() {
       return res.data;
     },
   });
+  const handleReload = () => {
+    refetch();
+  };
 
   if (isLoading) return <Loading message="Loading your tasks ..."></Loading>;
   if (error)
     return (
-      <ErrorMessage
-        title="Network Error!"
-        message="Unable to load your tasks. Please check your internet connection."
-      ></ErrorMessage>
+      <View style={styles.errorContainer}>
+        <ErrorMessage
+          title="Network Error!"
+          message="Unable to load your tasks. Please check your internet connection."
+        ></ErrorMessage>
+        <TouchableOpacity style={styles.reloadButton} onPress={handleReload}>
+          <View style={styles.buttonTextContainer}>
+            <Text style={styles.reloadButtonText}>RELOAD</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
   return (
     <View style={styles.mainBoard}>
@@ -39,30 +51,35 @@ const styles = StyleSheet.create({
     padding: 0,
     width: "90%",
   },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  reloadButton: {
+    backgroundColor: "#4CAF50", // 绿色背景
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    elevation: 3, // Android阴影
+    shadowColor: "#000", // iOS阴影
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2,
   },
-  taskCount: {
+  reloadButtonText: {
+    color: "white",
+    fontWeight: "bold",
     fontSize: 16,
-    fontWeight: "500",
-    color: "#1976D2",
-  },
-  completedCount: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#2E7D32",
+    textAlign: "center",
   },
 });

@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F7FA",
   },
   loadingCard: {
+    height: "100%",
     backgroundColor: "#FFFFFF",
     padding: 30,
     borderRadius: 16,
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     minWidth: "80%",
+    justifyContent: "center",
   },
   spinner: {
     marginBottom: 20,

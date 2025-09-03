@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F7FA",
   },
   errorCard: {
+    height: "100%",
     backgroundColor: "#FFFFFF",
     padding: 30,
     borderRadius: 16,
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
     minWidth: "80%",
+    justifyContent: "center",
   },
   icon: {
     marginBottom: 16,
